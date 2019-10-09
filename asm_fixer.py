@@ -59,6 +59,9 @@ def main():
     parser.add_argument('-s', '--safe', '--backup-mode', help='generate a backup file (not required if --backup is set)', action='store_true')
     parser.add_argument('-u', '--unsafe', '--no-backup', help='do not use a backup file, when used with --overwrite (not recommended)', action='store_true')
     parser.add_argument('-b', '--backup', '--backup-file', dest='BACKUP_FILE', help=f'the name of the backup file (default: {DEFAULT_BACKUP_FILE})')
+    #parser.add_argument('-a', '--all', '-all-files', help=f'process all assembly files in the directory', action='store_true')
+    #parser.add_argument('-P', '--prefix', help=f'set the prefix to add to all output file names (default: nothing)', default='')
+    #parser.add_argument('-S', '--suffix', help=f'set the suffix to add to all output file names (default: nothing', default='')
     args = parser.parse_args()
 
     # Process command-line arguments
@@ -312,9 +315,11 @@ def main():
             if not config['fix_file_width'] or len(output_string) <= config['file_width']:
                 print(output_string, file=output_file)
             else:
-                last_space = output_string.rfind(' ', 0, config['file_width'])
-                print(output_string[:last_space], file=output_file)
-                print('; '.rjust(output_string.find(';') + 2) + ' '*config['long_comment_indent_amount'] + output_string[last_space + 1:])
+                while len(output_string) > config['file_width']:
+                    last_space = output_string.rfind(' ', 0, config['file_width'])
+                    print(output_string[:last_space], file=output_file)
+                    output_string = '; '.rjust(output_string.find(';') + 2) + ' '*config['long_comment_indent_amount'] + output_string[last_space + 1:]
+                print(output_string, file=output_file)
     output_file.close()
 
           
