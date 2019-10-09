@@ -235,9 +235,11 @@ def main():
                 else:
                     line = f'; {token["field"]}: {token["value"]}'
                 if config['fix_file_width'] and len(line) > config['file_width']:
-                    last_space = line.rfind(' ', 0, config['file_width'])
-                    parsed_tokens.append(line[:last_space])
-                    parsed_tokens.append('; '.ljust(len('; : ') + max_field_size) + line[last_space + 1:])
+                    while len(line) > config['file_width']:
+                        last_space = line.rfind(' ', 0, config['file_width'])
+                        parsed_tokens.append(line[:last_space])
+                        line = '; '.ljust(len('; : ') + max_field_size) + line[last_space + 1:]
+                    parsed_tokens.append(line)
                 else:
                     parsed_tokens.append(line)
             elif token['subtype'] == 'full_line':
